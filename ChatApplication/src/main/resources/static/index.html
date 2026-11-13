@@ -1,0 +1,586 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tomato Support</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f5f5f7;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* MAIN CHAT WINDOW */
+
+        .chat-container {
+            width: 350px;
+            height: 490px;
+            max-width: calc(100vw - 20px);
+            max-height: calc(100vh - 20px);
+
+            background: #ffffff;
+            border-radius: 17px;
+            overflow: hidden;
+
+            display: flex;
+            flex-direction: column;
+
+            box-shadow: 0 5px 22px rgba(0, 0, 0, 0.10);
+        }
+
+        /* HEADER */
+
+        .header {
+            height: 80px;
+            min-height: 80px;
+            position: relative;
+
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+
+            color: white;
+            background: linear-gradient(110deg, #ed102d, #ff4059);
+            overflow: hidden;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 2;
+        }
+
+        .logo {
+            width: 38px;
+            height: 38px;
+            border: 2px solid white;
+            border-radius: 50%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 24px;
+            background: rgba(255,255,255,0.12);
+        }
+
+        .brand h1 {
+            font-size: 19px;
+            font-weight: 750;
+            margin-bottom: 3px;
+        }
+
+        .brand p {
+            font-size: 10px;
+        }
+
+        /* HEADER DECORATION */
+
+        .header-art {
+            position: absolute;
+            right: 10px;
+            bottom: 5px;
+            width: 155px;
+            height: 70px;
+        }
+
+        .city {
+            position: absolute;
+            right: 5px;
+            bottom: 0;
+            display: flex;
+            gap: 5px;
+            align-items: flex-end;
+            opacity: 0.16;
+        }
+
+        .building {
+            width: 17px;
+            background: #8d1530;
+            border-radius: 3px 3px 0 0;
+        }
+
+        .building:nth-child(1) { height: 35px; }
+        .building:nth-child(2) { height: 48px; }
+        .building:nth-child(3) { height: 28px; }
+
+        .scooter {
+            position: absolute;
+            right: 12px;
+            bottom: 0;
+            font-size: 43px;
+            z-index: 2;
+            transform: scaleX(-1);
+        }
+
+        .pin {
+            position: absolute;
+            top: 0;
+            right: 95px;
+            font-size: 18px;
+        }
+
+        /* HEADER CURVE */
+
+        .header::after {
+            content: "";
+            position: absolute;
+            left: -5%;
+            bottom: -23px;
+            width: 110%;
+            height: 34px;
+
+            background: white;
+            border-radius: 50% 50% 0 0;
+            transform: rotate(-1deg);
+        }
+
+        /* CHAT BODY */
+        .chat-area {
+            flex: 1;
+            min-height: 0;
+            padding: 5px 13px 12px;
+            overflow-y: auto;
+            background: #fff;
+        }
+
+        .date-divider {
+            text-align: center;
+            margin: 1px 0 17px;
+        }
+
+        .date-divider span {
+            display: inline-block;
+            padding: 4px 16px;
+            border-radius: 20px;
+            background: #f1eff4;
+            color: #555;
+            font-size: 10px;
+        }
+
+        /* WELCOME MESSAGE */
+
+        .welcome {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-top: 0;
+            margin-bottom: 12px;
+        }
+
+        .avatar {
+            width: 29px;
+            height: 29px;
+            min-width: 29px;
+            border-radius: 50%;
+
+            background: #ed1735;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 19px;
+        }
+
+        .welcome-content {
+            max-width: calc(100% - 39px);
+        }
+
+        .bot-message {
+            background: #ffe8ec;
+            padding: 8px 12px;
+            border-radius: 12px;
+            border-top-left-radius: 4px;
+
+            color: #20202a;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .bot-message strong {
+            display: block;
+            font-size: 13px;
+            margin-bottom: 1px;
+        }
+
+        .message-time {
+            display: block;
+            font-size: 9px;
+            color: #999;
+            margin: 4px 2px;
+        }
+
+        /* CHAT MESSAGES */
+
+        #chat-messages {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .message-row {
+            display: flex;
+            width: 100%;
+        }
+
+        .message-row.user {
+            justify-content: flex-end;
+        }
+
+        .message {
+            max-width: 78%;
+            padding: 8px 12px;
+            border-radius: 12px;
+
+            font-size: 12px;
+            line-height: 1.5;
+            overflow-wrap: anywhere;
+            white-space: pre-wrap;
+        }
+
+        .message.user {
+            background: #ed1c35;
+            color: white;
+            border-top-right-radius: 4px;
+        }
+
+        .message.bot {
+            background: #f0f0f3;
+            color: #333;
+            border-top-left-radius: 4px;
+        }
+
+        .typing {
+            font-size: 10px;
+            color: #999;
+            padding: 7px;
+        }
+
+        /* BOTTOM INPUT */
+
+        .chat-footer {
+            flex-shrink: 0;
+            padding: 8px 10px 10px;
+            background: linear-gradient(to top, #eeeeef, #ffffff);
+        }
+
+        .input-box {
+            height: 39px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            padding: 4px 6px 4px 10px;
+
+            border: 1px solid #dedee5;
+            border-radius: 13px;
+            background: white;
+
+            box-shadow: 0 2px 7px rgba(0,0,0,0.04);
+        }
+
+        .attach-btn {
+            border: none;
+            background: transparent;
+            color: #646477;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .input-box input {
+            flex: 1;
+            min-width: 0;
+            border: none;
+            outline: none;
+            background: transparent;
+
+            font-size: 11px;
+            color: #333;
+        }
+
+        .input-box input::placeholder {
+            color: #999;
+        }
+
+        .send-btn {
+            width: 32px;
+            height: 30px;
+            border: none;
+            border-radius: 9px;
+
+            background: #ed1c35;
+            color: white;
+            font-size: 17px;
+
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .send-btn:hover {
+            background: #ce102a;
+        }
+
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .chat-container {
+                width: 100%;
+                height: min(490px, calc(100vh - 20px));
+            }
+
+            .header {
+                padding: 10px 13px;
+            }
+
+            .brand h1 {
+                font-size: 17px;
+            }
+
+            .header-art {
+                right: 0;
+                opacity: 0.8;
+            }
+
+            .chat-area {
+                padding: 12px 10px;
+            }
+        }
+
+        @media (max-height: 450px) {
+            .chat-container {
+                height: calc(100vh - 12px);
+            }
+
+            .header {
+                height: 65px;
+                min-height: 65px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="chat-container">
+
+    <!-- HEADER -->
+
+    <header class="header">
+
+        <div class="brand">
+            <div class="logo">🍅</div>
+
+            <div>
+                <h1>Tomato Support</h1>
+                <p>✨ Your AI Food Delivery Assistant</p>
+            </div>
+        </div>
+
+        <div class="header-art">
+
+            <div class="city">
+                <div class="building"></div>
+                <div class="building"></div>
+                <div class="building"></div>
+            </div>
+
+            <div class="pin">📍</div>
+            <div class="scooter">🛵</div>
+
+        </div>
+
+    </header>
+
+
+    <!-- CHAT AREA -->
+
+    <main class="chat-area" id="chat-area">
+
+        <!-- INITIAL MESSAGE -->
+
+        <div class="welcome">
+
+            <div class="avatar">🍅</div>
+
+            <div class="welcome-content">
+
+                <div class="bot-message">
+                    <strong>Hello! 👋</strong>
+                    Welcome to Tomato. How can I help you today?
+                </div>
+
+                <span class="message-time">12:00 PM</span>
+
+            </div>
+
+        </div>
+
+        <!-- DYNAMIC MESSAGES -->
+
+        <div id="chat-messages"></div>
+
+    </main>
+
+
+    <!-- MESSAGE INPUT -->
+
+    <footer class="chat-footer">
+
+        <form class="input-box" id="chat-form">
+
+            <button type="button"
+                    class="attach-btn"
+                    aria-label="Attachment"
+                    title="Attachment">
+                📎
+            </button>
+
+            <input
+                    type="text"
+                    id="message-input"
+                    placeholder="Type your message here..."
+                    autocomplete="off"
+                    required
+            >
+
+            <button type="submit"
+                    class="send-btn"
+                    id="send-btn"
+                    aria-label="Send message">
+                ➤
+            </button>
+
+        </form>
+
+    </footer>
+
+</div>
+
+
+<!-- JAVASCRIPT -->
+
+<script>
+
+    const form = document.getElementById("chat-form");
+    const input = document.getElementById("message-input");
+    const messages = document.getElementById("chat-messages");
+    const chatArea = document.getElementById("chat-area");
+    const sendBtn = document.getElementById("send-btn");
+
+
+    function scrollToBottom() {
+        chatArea.scrollTop = chatArea.scrollHeight;
+    }
+
+
+    function addMessage(text, sender) {
+
+        const row = document.createElement("div");
+        row.className = `message-row ${sender}`;
+
+        const bubble = document.createElement("div");
+        bubble.className = `message ${sender}`;
+        bubble.textContent = text;
+
+        row.appendChild(bubble);
+        messages.appendChild(row);
+
+        scrollToBottom();
+    }
+
+
+    form.addEventListener("submit", async (event) => {
+
+        event.preventDefault();
+
+        const userMessage = input.value.trim();
+
+        if (!userMessage || sendBtn.disabled) return;
+
+        addMessage(userMessage, "user");
+
+        input.value = "";
+        sendBtn.disabled = true;
+
+        const typing = document.createElement("div");
+        typing.className = "typing";
+        typing.textContent = "🍅 Tomato AI is typing...";
+
+        messages.appendChild(typing);
+        scrollToBottom();
+
+        try {
+
+            const response = await fetch("/api/chat", {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    message: userMessage
+                })
+
+            });
+
+            if (!response.ok) {
+                throw new Error("Server error: " + response.status);
+            }
+
+            const reply = await response.text();
+
+            typing.remove();
+            addMessage(reply, "bot");
+
+        } catch (error) {
+
+            typing.remove();
+
+            addMessage(
+                "Sorry! Unable to connect to Tomato AI. Please try again.",
+                "bot"
+            );
+
+            console.error("Chat error:", error);
+
+        } finally {
+
+            sendBtn.disabled = false;
+            input.focus();
+
+        }
+
+    });
+
+</script>
+
+</body>
+</html>
